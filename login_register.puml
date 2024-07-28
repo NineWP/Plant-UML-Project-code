@@ -1,0 +1,58 @@
+@startuml
+actor User 
+boundary UI
+control Controller
+database Database
+
+== Registration ==
+
+User -> UI : enter registration details
+activate UI
+
+UI -> Controller : submit registration details
+activate Controller
+
+Controller -> Database : check if email exists
+activate Database
+Database --> Controller : email exists/does not exist
+deactivate Database
+
+alt email exists
+    Controller --> UI : email already in use
+    UI --> User : show email in use message
+else email does not exist
+    Controller -> Database : store user details
+    activate Database
+    Database --> Controller : return success
+    deactivate Database
+
+    Controller --> UI : registration successful
+    UI --> User : show success message
+end
+deactivate Controller
+deactivate UI
+
+== Login ==
+
+User -> UI : enter login details
+activate UI
+
+UI -> Controller : submit login details
+activate Controller
+
+Controller -> Database : validate user credentials
+activate Database
+Database --> Controller : return success/failure
+deactivate Database
+
+alt login successful
+    Controller --> UI : login successful
+    UI --> User : show welcome message
+else login failed
+    Controller --> UI : incorrect username or password
+    UI --> User : show error message
+end
+deactivate Controller
+deactivate UI
+
+@enduml

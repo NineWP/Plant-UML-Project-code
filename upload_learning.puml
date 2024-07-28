@@ -1,0 +1,29 @@
+@startuml
+actor User 
+boundary UI
+control Controller
+database Database
+
+User -> UI : select file to upload
+activate UI
+
+UI -> Controller : upload file
+activate Controller
+
+Controller -> Controller : validate file type (.pdf, .md)
+alt valid file type
+    Controller -> Database : store file
+    activate Database
+    Database --> Controller : return success
+    deactivate Database
+
+    Controller --> UI : upload successful
+    UI --> User : show success message
+else invalid file type
+    Controller --> UI : invalid file type
+    UI --> User : show error message
+end
+deactivate Controller
+deactivate UI
+
+@enduml

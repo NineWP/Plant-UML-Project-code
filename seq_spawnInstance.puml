@@ -17,7 +17,7 @@ entity Environment
 
 Controller -> Environment : generate environment
 activate Environment
-Environment --> Controller : return success
+Environment --> Controller : return success/failed
 deactivate Environment
 
 alt success full create instance
