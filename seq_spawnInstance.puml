@@ -8,7 +8,6 @@ boundary Exercises
 User -> Exercises : select exercise
 activate Exercises
 
-
 control Controller
 
 Exercises -> Controller : make an exercise
@@ -16,33 +15,29 @@ activate Controller
 
 entity Environment
 
-
-
-    Controller -> Environment : generate environment
-    activate Environment
-    Environment --> Controller : return success
-    deactivate Environment
-
+Controller -> Environment : generate environment
+activate Environment
+Environment --> Controller : return success
+deactivate Environment
 
 alt success full create instance
     entity Instance
     Controller -> Instance : create instance
     activate Instance
     Instance --> Controller : return success
+    deactivate Instance
     Controller --> Exercises : IP, Port
     Exercises --> User : IP, Port
 else create instance failed 
+    Controller -> Instance : create instance
+    activate Instance
     Instance --> Controller : Cannot create Instance
     deactivate Instance
     Controller --> Exercises : Cannot create Instance
-    deactivate Controller
     Exercises --> User : Cannot create Instance
-    deactivate Exercises
 end
 
-
-
-
-
+deactivate Controller
+deactivate Exercises
 
 @enduml
