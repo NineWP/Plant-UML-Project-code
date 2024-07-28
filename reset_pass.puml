@@ -1,0 +1,74 @@
+@startuml
+actor User
+boundary UI
+control Controller
+database Database
+entity EmailService
+
+== Request Password Reset ==
+
+User -> UI : request password reset
+activate UI
+
+UI -> Controller : submit email
+activate Controller
+
+Controller -> Database : check if email exists
+activate Database
+Database --> Controller : email exists/does not exist
+deactivate Database
+
+alt email exists
+    Controller -> Database : create password reset token (time-limited, single-use)
+    activate Database
+    Database --> Controller : return reset token
+    deactivate Database
+
+    Controller -> EmailService : send reset link (with token) to user's email
+    activate EmailService
+    EmailService --> Controller : email sent
+    deactivate EmailService
+
+    Controller --> UI : show email sent message
+    UI --> User : show email sent message
+else email does not exist
+    Controller --> UI : show error message
+    UI --> User : show error message
+end
+deactivate Controller
+deactivate UI
+
+== Reset Password ==
+
+User -> UI : click reset link (with token)
+activate UI
+
+UI -> Controller : submit new password with token
+activate Controller
+
+Controller -> Database : validate token (check time limit and single-use)
+activate Database
+Database --> Controller : token valid/invalid
+deactivate Database
+
+alt token valid
+    Controller -> Database : update password
+    activate Database
+    Database --> Controller : return success
+    deactivate Database
+
+    Controller -> Database : invalidate token
+    activate Database
+    Database --> Controller : token invalidated
+    deactivate Database
+
+    Controller --> UI : password reset successful
+    UI --> User : show success message
+else token invalid
+    Controller --> UI : show error message
+    UI --> User : show error message
+end
+deactivate Controller
+deactivate UI
+
+@enduml
