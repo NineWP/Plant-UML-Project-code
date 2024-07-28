@@ -1,0 +1,48 @@
+@startuml
+left to right direction
+
+actor Student
+actor Teacher
+actor EmailService
+
+rectangle "Cybersecurity Playground Platform" {
+    usecase "Register" as UC1
+    usecase "Login" as UC2
+    usecase "Forgot Password" as UC3
+    usecase "Doing Exercise" as UC4
+    usecase "Read Learning Material" as UC5
+    usecase "Change Password" as UC6
+    usecase "Create Exercise" as UC7
+    usecase "Delete Exercise" as UC8
+    usecase "Add Content" as UC9
+    usecase "Edit Content" as UC10
+    usecase "Delete Content" as UC11
+    usecase "Select Template" as UC12
+    usecase "Monitoring Student" as UC13
+}
+
+Student --> UC1
+Student --> UC2
+Student --> UC4
+Student --> UC5
+Student --> UC6
+
+Teacher --> UC1
+Teacher --> UC2
+Teacher --> UC4
+Teacher --> UC5
+Teacher --> UC6
+Teacher --> UC7
+Teacher --> UC8
+Teacher --> UC9
+Teacher --> UC10
+Teacher --> UC11
+Teacher --> UC12
+Teacher --> UC13
+
+UC2 -right-> UC3 : <<include>>
+UC6 -right-> EmailService : Send Reset Link
+UC7 -down-> UC12 : <<include>>
+UC10 -down-> UC11 : <<include>>
+
+@enduml
