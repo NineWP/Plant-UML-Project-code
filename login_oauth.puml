@@ -1,0 +1,48 @@
+@startuml LoginOAuth
+actor User 
+boundary UI
+control Controller
+entity GoogleOAuth as Google
+database Database
+
+== Login with Google OAuth ==
+
+User -> UI : click Google login
+activate UI
+
+UI -> Google : redirect to Google OAuth
+activate Google
+Google --> User : Google login page
+User -> Google : enter Google credentials
+Google --> UI : OAuth token
+deactivate Google
+
+UI -> Controller : submit OAuth token
+activate Controller
+
+Controller -> Google : validate OAuth token
+activate Google
+Google --> Controller : return user info
+deactivate Google
+
+Controller -> Database : check if user exists
+activate Database
+Database --> Controller : user info exists/does not exist
+deactivate Database
+
+alt user exists
+    Controller --> UI : login successful
+    UI --> User : show welcome message
+else user does not exist
+    Controller -> Database : store new user info
+    activate Database
+    Database --> Controller : user info stored
+    deactivate Database
+
+    Controller --> UI : login successful
+    UI --> User : show welcome message
+end
+deactivate Controller
+deactivate UI
+
+@enduml

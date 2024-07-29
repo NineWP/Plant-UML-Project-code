@@ -1,0 +1,45 @@
+@startuml
+actor User 
+boundary UI
+control Controller
+entity DockerEngine as Docker
+database Database
+
+== Upload Container Image ==
+
+User -> UI : select file to upload
+activate UI
+
+UI -> Controller : upload file
+activate Controller
+Controller -> Docker : validate file type (.tar)
+activate Docker
+Docker --> Controller : return success or failure
+alt success
+
+    Controller -> Docker : push container image stage 1
+    Docker --> Controller : return success or failure
+    alt success
+        Controller -> Docker : push container image stage 2
+        Docker --> Controller : return success
+        deactivate Docker
+
+        Controller -> Database : store container info
+        activate Database
+        Database --> Controller : return success
+        deactivate Database
+
+        Controller --> UI : upload successful
+        UI --> User : show success message
+    else failure
+        Controller --> UI : error in stage 2 push
+        UI --> User : show error message
+    end
+else failure
+    Controller --> UI : invalid file type
+    UI --> User : show error message
+end
+deactivate Controller
+deactivate UI
+
+@enduml
